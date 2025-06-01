@@ -18,7 +18,10 @@ html {
 }
 
 body {
-  margin-bottom: 60px;
+    margin-bottom: 60px;
+    background-color: #1e1e1e;
+    color: #f5f5f5;
+    font-family: 'Segoe UI', sans-serif;
 }
 
 .form-floating > .form-control-plaintext::placeholder, .form-floating > .form-control::placeholder {
@@ -28,4 +31,16 @@ body {
 
 .form-floating > .form-control-plaintext:focus::placeholder, .form-floating > .form-control:focus::placeholder {
   text-align: start;
+}
+
+.navbar {
+    border-bottom: 2px solid #A0522D;
+}
+
+.navbar-brand, .nav-link, .navbar-text {
+    color: #f5f5f5 !important;
+}
+
+.nav-link:hover, .navbar-brand:hover {
+    color: #D2B48C !important;
 }

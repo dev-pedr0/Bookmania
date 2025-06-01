@@ -1,5 +1,10 @@
+using Bookmania.Data;
+using Bookmania.Helpers;
+using Bookmania.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
+using Microsoft.AspNetCore.Mvc.Rendering;
+using Microsoft.EntityFrameworkCore;
 
 namespace Bookmania.Pages
 {
@@ -7,14 +12,91 @@ namespace Bookmania.Pages
     {
         private readonly ILogger<IndexModel> _logger;
 
-        public IndexModel(ILogger<IndexModel> logger)
+        private readonly ApplicationDbContext _context;
+
+        public IndexModel(ILogger<IndexModel> logger, ApplicationDbContext context)
         {
             _logger = logger;
+            _context = context;
         }
 
-        public void OnGet()
-        {
+        public PaginatedList<Livro> Livros { get; set; }
 
+        public string CurrentSort { get; set; }
+        public string TitleSort { get; set; }
+        public string AuthorSort { get; set; }
+        public string TemaSort { get; set; }
+        public string PrecoSort { get; set; }
+        public string QuantidadeSort { get; set; }
+
+        public string CurrentTitle { get; set; }
+        public string CurrentAuthor { get; set; }
+        public string CurrentTema { get; set; }
+        public bool SomenteDisponiveis { get; set; }
+        public bool MostrarCotacaoEspecial { get; set; }
+        public SelectList TemasSelectList { get; set; }
+
+        public async Task OnGetAsync(string sortOrder, string currentTitle, string currentAuthor, string currentTema,
+                                 bool somenteDisponiveis, bool mostrarCotacaoEspecial, int pageIndex = 1)
+        {
+            CurrentSort = sortOrder;
+            CurrentTitle = currentTitle;
+            CurrentAuthor = currentAuthor;
+            CurrentTema = currentTema;
+            SomenteDisponiveis = somenteDisponiveis;
+            MostrarCotacaoEspecial = mostrarCotacaoEspecial;
+
+            TemasSelectList = new SelectList(await _context.Temas.OrderBy(t => t.Nome).ToListAsync(), "Nome", "Nome");
+
+            TitleSort = String.IsNullOrEmpty(sortOrder) ? "title_desc" : "";
+            AuthorSort = sortOrder == "Author" ? "author_desc" : "Author";
+            TemaSort = sortOrder == "Tema" ? "tema_desc" : "Tema";
+            PrecoSort = sortOrder == "Preco" ? "preco_desc" : "Preco";
+            QuantidadeSort = sortOrder == "Quantidade" ? "quantidade_desc" : "Quantidade";
+
+            var livros = _context.Livros.Include(l => l.Temas).AsQueryable();
+
+            if (!string.IsNullOrEmpty(CurrentTitle))
+            {
+                livros = livros.Where(l => l.Titulo.Contains(CurrentTitle));
+            }
+
+            if (!string.IsNullOrEmpty(CurrentAuthor))
+            {
+                livros = livros.Where(l => l.Autor.Contains(CurrentAuthor));
+            }
+
+            if (!string.IsNullOrEmpty(CurrentTema))
+            {
+                livros = livros.Where(l => l.Temas.Any(t => t.Nome == CurrentTema));
+            }
+
+            if (SomenteDisponiveis)
+            {
+                livros = livros.Where(l => l.Quantidade > 0);
+            }
+
+            if (!MostrarCotacaoEspecial)
+            {
+                livros = livros.Where(l => !l.LivroCotacaoEspecial);
+            }
+
+            livros = sortOrder switch
+            {
+                "title_desc" => livros.OrderByDescending(s => s.Titulo),
+                "Author" => livros.OrderBy(s => s.Autor),
+                "author_desc" => livros.OrderByDescending(s => s.Autor),
+                "Tema" => livros.OrderBy(s => s.Temas.FirstOrDefault().Nome),
+                "tema_desc" => livros.OrderByDescending(s => s.Temas.FirstOrDefault().Nome),
+                "Preco" => livros.OrderBy(s => s.PrecoCompra),
+                "preco_desc" => livros.OrderByDescending(s => s.PrecoCompra),
+                "Quantidade" => livros.OrderBy(s => s.Quantidade),
+                "quantidade_desc" => livros.OrderByDescending(s => s.Quantidade),
+                _ => livros.OrderBy(s => s.Titulo),
+            };
+
+            int pageSize = 10;
+            Livros = await PaginatedList<Livro>.CreateAsync(livros.AsNoTracking(), pageIndex, pageSize);
         }
     }
 }
