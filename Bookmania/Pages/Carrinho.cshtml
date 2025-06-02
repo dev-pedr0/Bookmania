@@ -1,0 +1,87 @@
+﻿@page
+@model PrivacyModel
+@{
+    ViewData["Title"] = "Carrinho";
+}
+<style>
+    .modal-content {
+        background-color: #3a2f2f;
+        color: #f5f5f5;
+        border-radius: 10px;
+        border: 2px solid #d2a679;
+    }
+
+    .modal-header {
+        border-bottom: 1px solid #d2a679;
+    }
+
+    .modal-title {
+        color: #d2a679;
+    }
+
+    .modal-body p {
+        color: #f5f5f5;
+    }
+
+    .modal-footer {
+        border-top: 1px solid #d2a679;
+    }
+
+    .btn-amadeirado {
+        background-color: #d2a679;
+        color: #1e1e1e;
+        border: none;
+        border-radius: 5px;
+        padding: 8px 16px;
+    }
+
+        .btn-amadeirado:hover {
+            background-color: #b88c5a;
+            color: #1e1e1e;
+        }
+
+    .modal-backdrop {
+        background-color: rgba(0, 0, 0, 0.8);
+    }
+</style>
+
+<h1>Seu Carrinho</h1>
+
+@if (!User.Identity.IsAuthenticated)
+{
+    <div class="modal fade show d-block" tabindex="1">
+        <div class="modal-dialog">
+            <div class="modal-content bg-dark text-light">
+                <div class="modal-header">
+                    <h5 class="modal-title text-warning">Acesso Restrito</h5>
+                </div>
+                <div class="modal-body">
+                    <p>Você precisa estar logado para acessar o carrinho.</p>
+                    <p>Você será redirecionado para a página de login em <span id="countdown">5</span> segundos.</p>
+                </div>
+                <div class="modal-footer">
+                    <a href="/Identity/Account/Login" class="btn btn-warning">Ir para Login Agora</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal-backdrop fade show"></div>
+
+    <script>
+        let seconds = 5;
+        const countdown = document.getElementById('countdown');
+        const interval = setInterval(() => {
+            seconds--;
+            countdown.innetText = seconds;
+            if (seconds <= 0) {
+                clearInterval(interval);
+                window.location.href = '/Identity/Account/Login';
+            }
+        }, 1000);
+    </script>
+}
+else
+{
+    <p>Seu carrinho está vazio por enquanto</p>
+}
