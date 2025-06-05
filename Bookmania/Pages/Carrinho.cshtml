@@ -3,7 +3,12 @@
 @{
     ViewData["Title"] = "Carrinho";
 }
+
 <style>
+    body {
+        background-color: #1e1e1e;
+    }
+
     .modal-content {
         background-color: #3a2f2f;
         color: #f5f5f5;
@@ -43,29 +48,89 @@
     .modal-backdrop {
         background-color: rgba(0, 0, 0, 0.8);
     }
+
+    .tabela-livros th {
+        background-color: #3a2f2f;
+        color: #f5f5f5;
+        padding: 10px;
+        text-align: center;
+    }
+
+    .tabela-livros td {
+        padding: 8px;
+        vertical-align: middle;
+        text-align: center;
+        background-color: inherit !important;
+        color: inherit;
+    }
+
+    /* Toggle estilizado */
+    .switch {
+        position: relative;
+        display: inline-block;
+        width: 50px;
+        height: 26px;
+    }
+
+        .switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+    .slider {
+        position: absolute;
+        cursor: pointer;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background-color: #ccc;
+        transition: .4s;
+        border-radius: 34px;
+    }
+
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 20px;
+            width: 20px;
+            left: 3px;
+            bottom: 3px;
+            background-color: white;
+            transition: .4s;
+            border-radius: 50%;
+        }
+
+    input:checked + .slider {
+        background-color: #d2a679;
+    }
+
+        input:checked + .slider:before {
+            transform: translateX(24px);
+        }
 </style>
 
-<h1>Seu Carrinho</h1>
+<h1 style="color: #d2a679;" class="text-center mb-4">Seu Carrinho</h1>
 
 @if (!User.Identity.IsAuthenticated)
 {
     <div class="modal fade show d-block" tabindex="1">
         <div class="modal-dialog">
-            <div class="modal-content bg-dark text-light">
+            <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title text-warning">Acesso Restrito</h5>
+                    <h5 class="modal-title">Acesso Restrito</h5>
                 </div>
                 <div class="modal-body">
                     <p>Você precisa estar logado para acessar o carrinho.</p>
-                    <p>Você será redirecionado para a página de login em <span id="countdown">5</span> segundos.</p>
+                    <p>Redirecionando para login em <span id="countdown">5</span> segundos.</p>
                 </div>
                 <div class="modal-footer">
-                    <a href="/Identity/Account/Login" class="btn btn-warning">Ir para Login Agora</a>
+                    <a href="/Identity/Account/Login" class="btn btn-amadeirado">Ir para Login Agora</a>
                 </div>
             </div>
         </div>
     </div>
-
     <div class="modal-backdrop fade show"></div>
 
     <script>
@@ -73,7 +138,7 @@
         const countdown = document.getElementById('countdown');
         const interval = setInterval(() => {
             seconds--;
-            countdown.innetText = seconds;
+            countdown.innerText = seconds;
             if (seconds <= 0) {
                 clearInterval(interval);
                 window.location.href = '/Identity/Account/Login';
@@ -83,5 +148,128 @@
 }
 else
 {
-    <p>Seu carrinho está vazio por enquanto</p>
+    @if (Model.ItensCarrinho == null || !Model.ItensCarrinho.Any())
+    {
+        <div class="alert alert-warning">
+            Seu carrinho está vazio.
+        </div>
+    }
+    else
+    {
+        <form method="post" id="formCarrinho">
+            <table class="table tabela-livros">
+                <thead>
+                    <tr>
+                        <th>Título</th>
+                        <th>Quantidade</th>
+                        <th>Compra / Aluguel</th>
+                        <th>Período (se aluguel)</th>
+                        <th>Subtotal (R$)</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @for (int i = 0; i < Model.ItensCarrinho.Count; i++)
+                    {
+                        var item = Model.ItensCarrinho[i];
+                        var maxDias = item.CotacaoEspecial ? 30 : 90;
+                        var maxSemanas = Math.Floor((double)maxDias / 7);
+
+                        <tr>
+                            <td>@item.Titulo</td>
+                            <td>
+                                <input type="number" name="ItensCarrinho[@i].Quantidade" value="@item.Quantidade" min="1" style="width:60px;" onchange="atualizarTotais()" />
+                            </td>
+                            <td>
+                                <label class="switch">
+                                    <input type="checkbox" id="modoSwitch_@i" onchange="atualizarTotais()" />
+                                    <span class="slider"></span>
+                                </label>
+                                <div><small id="modoLabel_@i">Compra</small></div>
+                            </td>
+                            <td>
+                                <input type="number" id="periodoInput_@i" value="1" min="1" max="@maxSemanas" style="width:60px;" onchange="atualizarTotais()" />
+                                <span>semana(s)</span>
+                            </td>
+                            <td>
+                                R$ <span id="subtotal_@i">0,00</span>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+
+            <div class="mt-3 text-center">
+                <h4>Total: <span id="valorTotal">R$ 0,00</span></h4>
+                <button type="submit" class="btn btn-success me-2">Finalizar Pedido</button>
+                <a class="btn btn-secondary" href="/Index">Continuar Comprando</a>
+            </div>
+        </form>
+
+        <script>
+            const itens = [
+                @for (int i = 0; i < Model.ItensCarrinho.Count; i++)
+                {
+                        var item = Model.ItensCarrinho[i];
+                        <text>{
+                            precoCompra: @item.PrecoCompra.ToString("F2", System.Globalization.CultureInfo.InvariantCulture),
+                            precoAluguel: @item.PrecoAluguel.ToString("F2", System.Globalization.CultureInfo.InvariantCulture),
+                            maxDias: @(item.CotacaoEspecial ? 30 : 90)
+                        }@((i < Model.ItensCarrinho.Count - 1) ? "," : "")</text>
+                }
+            ];
+
+            function formatarReais(valor) {
+                return valor.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+            }
+
+            function calcularSubtotal(i) {
+                const qtd = Number(document.querySelector(`input[name='ItensCarrinho[${i}].Quantidade']`).value);
+                const modoAluguel = document.getElementById(`modoSwitch_${i}`).checked;
+                const semanas = Number(document.getElementById(`periodoInput_${i}`).value);
+                const precoCompra = parseFloat(itens[i].precoCompra);
+                const precoAluguel = parseFloat(itens[i].precoAluguel);
+                const maxSemanas = Math.floor(itens[i].maxDias / 7);
+
+                const label = document.getElementById(`modoLabel_${i}`);
+                label.innerText = modoAluguel ? 'Aluguel' : 'Compra';
+
+                if (modoAluguel) {
+                    let semanasValidadas = semanas;
+
+                    if (semanasValidadas < 1) {
+                        semanasValidadas = 1;
+                        document.getElementById(`periodoInput_${i}`).value = 1;
+                        alert('O período mínimo para aluguel é 1 semana.');
+                    }
+
+                    if (semanasValidadas > maxSemanas) {
+                        semanasValidadas = maxSemanas;
+                        document.getElementById(`periodoInput_${i}`).value = maxSemanas;
+                        alert(`O período máximo para aluguel deste livro é ${maxSemanas} semanas.`);
+                    }
+
+                    const precoPorSemana = precoAluguel / 2;
+                    const valorAluguel = precoPorSemana * semanasValidadas;
+
+                    return qtd * valorAluguel;
+                } else {
+                    return qtd * precoCompra;
+                }
+            }
+
+            function atualizarTotais() {
+                let total = 0;
+                itens.forEach((item, i) => {
+                    const subtotal = calcularSubtotal(i);
+                    total += subtotal;
+                    document.getElementById(`subtotal_${i}`).innerText = subtotal.toFixed(2).replace('.', ',');
+                });
+                document.getElementById('valorTotal').innerText = total.toFixed(2).replace('.', ',');
+            }
+
+            window.onload = () => {
+                atualizarTotais();
+            };
+        </script>
+    }
 }

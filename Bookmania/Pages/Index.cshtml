@@ -181,11 +181,24 @@
                 <td>R$ @livro.PrecoCompra.ToString("F2")</td>
                 <td>@livro.Quantidade</td>
                 <td>@(livro.LivroCotacaoEspecial ? "Sim" : "Não")</td>
-                <td>
-                    <input class="form-control form-control-sm text-dark" type="number" min="0" max="@livro.Quantidade" value="0" @(livro.Quantidade == 0 ? "disabled" : "") />
-                </td>
-                <td>
-                    <button class="btn-add" @(livro.Quantidade == 0 ? "disabled" : "")>Carrinho</button>
+                <td colspan="2">
+                    <form asp-page-handler="AdicionarAoCarrinho" method="post" class="d-flex gap-2 align-items-center">
+                        <input type="hidden" name="livroId" value="@livro.Id" />
+                        <input class="form-control form-control-sm text-warning"
+                               type="number"
+                               name="quantidade"
+                               min="0"
+                               max="@livro.Quantidade"
+                               value=""
+                               style="width: 70px;"
+                               @(livro.Quantidade == 0 ? "disabled" : "") />
+
+                        <button type="submit"
+                                class="btn btn-sm btn-success"
+                                @(livro.Quantidade == 0 ? "disabled" : "")>
+                            Carrinho
+                        </button>
+                    </form>
                 </td>
             </tr>
         }

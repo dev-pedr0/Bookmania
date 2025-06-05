@@ -98,5 +98,21 @@ namespace Bookmania.Pages
             int pageSize = 10;
             Livros = await PaginatedList<Livro>.CreateAsync(livros.AsNoTracking(), pageIndex, pageSize);
         }
+
+        public IActionResult OnPostAdicionarAoCarrinho(int livroId, int quantidade)
+        {
+            if (!User.Identity.IsAuthenticated)
+            {
+                return RedirectToPage();
+            }
+
+            var livro = _context.Livros.Include(l => l.Temas).FirstOrDefault(l => l.Id == livroId);
+            if (livro == null || quantidade <= 0)
+            {
+                return RedirectToPage();
+            }
+            CarrinhoSessionHelper.AdicionarItem(HttpContext.Session, livro, quantidade);
+            return RedirectToPage();
+        }
     }
 }

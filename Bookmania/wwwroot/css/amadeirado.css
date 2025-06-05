@@ -1,0 +1,46 @@
+﻿body {
+    background-color: #1e1e1e;
+    color: #f5f5f5;
+    background-image: url('/images/wood-pattern.jpg');
+    background-size: cover;
+    font-family: 'Segoe UI', sans-serif;
+}
+
+.register-container {
+    background-color: #3a2f2f;
+    padding: 40px;
+    margin: 50px auto;
+    border-radius: 15px;
+    max-width: 500px;
+    box-shadow: 0 0 20px rgba(0,0,0,0.3);
+}
+
+.title {
+    text-align: center;
+    color: #d2a679;
+    margin-bottom: 20px;
+}
+
+.form-group label {
+    font-weight: bold;
+}
+
+.form-control {
+    border: 1px solid #a36b4f;
+    border-radius: 10px;
+    margin-bottom: 10px;
+}
+
+.btn-register {
+    background-color: #d2a679;
+    width: 100%;
+    padding: 10px;
+    border: none;
+    border-radius: 10px;
+    margin-top: 20px;
+    cursor: pointer;
+}
+
+    .btn-register:hover {
+        background-color: #70492e;
+    }
