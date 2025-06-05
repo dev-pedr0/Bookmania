@@ -1,0 +1,84 @@
+﻿@page
+@model Bookmania.Pages.ConfirmacaoPedidoModel
+@{
+	ViewData["Title"] = "Pedido Confirmado";
+}
+
+
+<style>
+    body {
+        background-color: #1e1e1e;
+        color: #f5f5f5;
+        text-align: center;
+    }
+
+    .container-confirmacao {
+        background-color: #3a2f2f;
+        border: 2px solid #d2a679;
+        border-radius: 15px;
+        padding: 30px;
+        max-width: 600px;
+        margin: 50px auto;
+        box-shadow: 0 0 20px rgba(0,0,0,0.7);
+    }
+
+    h1 {
+        color: #d2a679;
+        margin-bottom: 20px;
+    }
+
+    p {
+        font-size: 18px;
+        margin-bottom: 10px;
+    }
+
+    .btn-amadeirado {
+        background-color: #d2a679;
+        color: #1e1e1e !important;
+        border: none;
+        border-radius: 8px;
+        padding: 10px 20px;
+        text-decoration: none;
+        display: inline-block;
+        cursor: pointer;
+        margin: 10px;
+    }
+
+        .btn-amadeirado:hover {
+            background-color: #b88c5a;
+            color: #1e1e1e !important;
+        }
+
+    .btn-secondary {
+        background-color: #555;
+        color: #f5f5f5 !important;
+        border-radius: 8px;
+        padding: 10px 20px;
+        border: none;
+        text-decoration: none;
+        cursor: pointer;
+        margin: 10px;
+    }
+
+        .btn-secondary:hover {
+            background-color: #444;
+        }
+
+    .checkmark {
+        font-size: 80px;
+        color: #d2a679;
+        margin-bottom: 20px;
+    }
+</style>
+
+<div class="container-confirmacao">
+    <div class="checkmark">✔️</div>
+    <h1>Pedido Realizado com Sucesso!</h1>
+    <p>Obrigado, @Model.Usuario.Nome.</p>
+    <p>Seu pedido foi confirmado e está sendo processado.</p>
+
+    <div>
+        <a class="btn-amadeirado" asp-page="/Index">Voltar à Página Inicial</a>
+        <a class="btn-secondary" asp-page="/Pedidos/Index">Meus Pedidos</a>
+    </div>
+</div>

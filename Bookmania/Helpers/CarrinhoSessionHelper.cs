@@ -22,11 +22,11 @@ namespace Bookmania.Helpers
             session.SetString(CarrinhoKey, JsonSerializer.Serialize(carrinho));
         }
 
-        public static void AdicionarItem(ISession session, Livro livro, int quantidade)
+        public static void AdicionarItem(ISession session, Livro livro, int quantidade, bool modoAluguel = false, int periodoAluguelSemanas = 1)
         {
             var carrinho = GetCarrinho(session);
 
-            var itemExistente = carrinho.FirstOrDefault(i => i.LivroId == livro.Id);
+            var itemExistente = carrinho.FirstOrDefault(i => i.LivroId == livro.Id && i.ModoAluguel == modoAluguel && i.PeriodoAluguelSemanas == periodoAluguelSemanas);
             if (itemExistente != null)
             {
                 itemExistente.Quantidade += quantidade;
@@ -40,9 +40,24 @@ namespace Bookmania.Helpers
                     PrecoAluguel = livro.PrecoAluguel,
                     PrecoCompra = livro.PrecoCompra,
                     Quantidade = quantidade,
-                    CotacaoEspecial = livro.LivroCotacaoEspecial
+                    CotacaoEspecial = livro.LivroCotacaoEspecial,
+                    QuantidadeMax = livro.Quantidade,
+                    ModoAluguel = modoAluguel,
+                    PeriodoAluguelSemanas = periodoAluguelSemanas
                 });
             }
+            SaveCarrinho(session, carrinho);
+        }
+
+        public static void AtualizarPeriodoAluguel(ISession session, int semanas)
+        {
+            var carrinho = GetCarrinho(session);
+
+            foreach (var item in carrinho)
+            {
+                item.PeriodoAluguelSemanas = semanas;
+            }
+
             SaveCarrinho(session, carrinho);
         }
     }

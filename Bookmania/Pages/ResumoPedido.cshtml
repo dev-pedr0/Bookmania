@@ -1,0 +1,187 @@
+﻿@page
+@model Bookmania.Pages.ResumoPedidoModel
+@{
+	ViewData["Title"] = "Resumo do Pedido";
+}
+
+<style>
+    .resumo-pedido body {
+        background-color: #1e1e1e;
+        color: #f5f5f5;
+    }
+
+    .resumo-pedido h2, .resumo-pedido h4 {
+        color: #d2a679;
+    }
+
+    .resumo-pedido ul {
+        list-style: none;
+        padding-left: 0;
+    }
+
+    .resumo-pedido ul li {
+        padding: 4px 0;
+    }
+
+    .resumo-pedido hr {
+        border-color: #d2a679;
+    }
+
+    table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-bottom: 15px;
+        background-color: #3a2f2f;
+        color: #f5f5f5;
+        border-radius: 10px;
+        overflow: hidden;
+    }
+
+    thead th {
+        background-color: #3a2f2f;
+        border-bottom: 2px solid #d2a679;
+        padding: 10px;
+        text-align: center;
+    }
+
+    tbody td {
+        padding: 10px;
+        text-align: center;
+        border-bottom: 1px solid #d2a679;
+    }
+
+    tbody tr:last-child td {
+        border-bottom: none;
+    }
+
+    .resumo-pedido p {
+        font-weight: bold;
+        color: #d2a679;
+    }
+
+    .btn-amadeirado, .btn-amadeirado:visited {
+        background-color: #d2a679;
+        color: #1e1e1e !important;
+        border: none;
+        border-radius: 5px;
+        padding: 8px 16px;
+        text-decoration: none;
+        display: inline-block;
+        cursor: pointer;
+        margin-right: 10px;
+    }
+
+    .btn-amadeirado:hover {
+        background-color: #b88c5a;
+        color: #1e1e1e !important;
+    }
+
+    .btn-secondary {
+        background-color: #555;
+        color: #f5f5f5 !important;
+        border-radius: 5px;
+        padding: 8px 16px;
+        border: none;
+        text-decoration: none;
+        cursor: pointer;
+    }
+
+    .btn-secondary:hover {
+        background-color: #444;
+    }
+
+    .resumo-pedido form {
+        margin-top: 20px;
+        text-align: center;
+    }
+</style>
+
+<div class="resumo-pedido">
+    <h2 class="text-center">Resumo do Pedido</h2>
+
+    <h4>Informações do Cliente</h4>
+    <ul>
+        <li><strong>Nome:</strong> @Model.Usuario.Nome</li>
+        <li><strong>Email:</strong> @Model.Usuario.Email</li>
+        <li><strong>Telefone:</strong> @Model.Usuario.Telefone</li>
+        <li><strong>Endereço:</strong> @Model.Usuario.Endereco</li>
+    </ul>
+
+    <hr />
+
+    <h4>Itens de Compra</h4>
+    @if (Model.ItensCompra.Any())
+    {
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Título</th>
+                    <th>Quantidade</th>
+                    <th>Preço Unidade</th>
+                    <th>Subtotal</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model.ItensCompra)
+                {
+                    <tr>
+                        <td>@item.Titulo</td>
+                        <td>@item.Quantidade</td>
+                        <td>@string.Format("{0:C}", item.PrecoCompra)</td>
+                        <td>@string.Format("{0:C}", item.PrecoCompra * item.Quantidade)</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+        <p><strong>Total Compra:</strong> @Model.TotalCompra.ToString("C")</p>
+    }
+    else
+    {
+        <p>Nenhum item para compra.</p>
+    }
+
+    <hr />
+
+    <h4>Itens de Aluguel</h4>
+    @if (Model.ItensAluguel.Any())
+    {
+        <p><strong>Período de Aluguel:</strong> @Model.ItensAluguel.First().PeriodoAluguelSemanas semana(s) 
+        (@(Model.ItensAluguel.First().PeriodoAluguelSemanas * 7) dias)</p>
+
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Título</th>
+                    <th>Quantidade</th>
+                    <th>Preço Unidade</th>
+                    <th>Subtotal</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model.ItensAluguel)
+                {
+                    <tr>
+                        <td>@item.Titulo</td>
+                        <td>@item.Quantidade</td>
+                        <td>@string.Format("{0:C}", item.PrecoAluguel)</td>
+                        <td>@string.Format("{0:C}", item.PrecoAluguel * item.Quantidade)</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+        <p><strong>Total Aluguel:</strong> @Model.TotalAluguel.ToString("C")</p>
+    }
+    else
+    {
+        <p>Nenhum item para aluguel.</p>
+    }
+
+    <hr />
+
+    <h4>Total Geral: @Model.TotalGeral.ToString("C")</h4>
+
+    <form method="post">
+        <button type="submit" class="btn-amadeirado">Confirmar Pedido</button>
+        <a asp-page="/Carrinho" class="btn btn-secondary">Voltar ao Carrinho</a>
+    </form>
+</div>

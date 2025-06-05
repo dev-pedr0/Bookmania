@@ -64,7 +64,6 @@
         color: inherit;
     }
 
-    /* Toggle estilizado */
     .switch {
         position: relative;
         display: inline-block;
@@ -156,7 +155,7 @@ else
     }
     else
     {
-        <form method="post" id="formCarrinho">
+        <form method="post">
             <table class="table tabela-livros">
                 <thead>
                     <tr>
@@ -165,6 +164,7 @@ else
                         <th>Compra / Aluguel</th>
                         <th>Período (se aluguel)</th>
                         <th>Subtotal (R$)</th>
+                        <th>Ações</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -175,23 +175,46 @@ else
                         var maxSemanas = Math.Floor((double)maxDias / 7);
 
                         <tr>
-                            <td>@item.Titulo</td>
                             <td>
-                                <input type="number" name="ItensCarrinho[@i].Quantidade" value="@item.Quantidade" min="1" style="width:60px;" onchange="atualizarTotais()" />
+                                @item.Titulo
+                                <input type="hidden" asp-for="ItensCarrinho[@i].Titulo" />
+                                <input type="hidden" asp-for="ItensCarrinho[@i].LivroId" />
+                                <input type="hidden" asp-for="ItensCarrinho[@i].PrecoCompra" />
+                                <input type="hidden" asp-for="ItensCarrinho[@i].PrecoAluguel" />
+                                <input type="hidden" asp-for="ItensCarrinho[@i].QuantidadeMax" />
+                                <input type="hidden" asp-for="ItensCarrinho[@i].CotacaoEspecial" />
                             </td>
                             <td>
-                                <label class="switch">
-                                    <input type="checkbox" id="modoSwitch_@i" onchange="atualizarTotais()" />
-                                    <span class="slider"></span>
-                                </label>
-                                <div><small id="modoLabel_@i">Compra</small></div>
+                                <input type="number" asp-for="ItensCarrinho[@i].Quantidade"
+                                       min="1" max="@item.QuantidadeMax"
+                                       style="width:60px;"
+                                       onchange="validarQuantidade(@i);" />
+                                <div><small>Disponível: @item.QuantidadeMax</small></div>
                             </td>
                             <td>
-                                <input type="number" id="periodoInput_@i" value="1" min="1" max="@maxSemanas" style="width:60px;" onchange="atualizarTotais()" />
+                                <select asp-for="ItensCarrinho[@i].ModoAluguel"
+                                        class="form-select"
+                                        onchange="atualizarTotais();">
+                                    <option value="false" selected="@(item.ModoAluguel ? "false" : "selected")">Compra</option>
+                                    <option value="true" selected="@(item.ModoAluguel ? "selected" : "false")">Aluguel</option>
+                                </select>
+                            </td>
+                            <td>
+                                <input type="number" asp-for="ItensCarrinho[@i].PeriodoAluguelSemanas"
+                                       id="periodoInput_@i"
+                                       min="0" max="@maxSemanas"
+                                       style="width:60px;"
+                                       onchange="atualizarTotais();" />
                                 <span>semana(s)</span>
                             </td>
                             <td>
                                 R$ <span id="subtotal_@i">0,00</span>
+                            </td>
+                            <td>
+                                <button type="button" class="btn btn-danger btn-sm"
+                                        onclick="removerItem(@item.LivroId)">
+                                    Remover
+                                </button>
                             </td>
                         </tr>
                     }
@@ -210,11 +233,12 @@ else
                 @for (int i = 0; i < Model.ItensCarrinho.Count; i++)
                 {
                         var item = Model.ItensCarrinho[i];
-                        <text>{
+                        <text> {
                             precoCompra: @item.PrecoCompra.ToString("F2", System.Globalization.CultureInfo.InvariantCulture),
                             precoAluguel: @item.PrecoAluguel.ToString("F2", System.Globalization.CultureInfo.InvariantCulture),
-                            maxDias: @(item.CotacaoEspecial ? 30 : 90)
-                        }@((i < Model.ItensCarrinho.Count - 1) ? "," : "")</text>
+                            maxDias: @(item.CotacaoEspecial ? 30 : 90),
+                            estoque: @item.QuantidadeMax
+                        } @((i < Model.ItensCarrinho.Count - 1) ? "," : "") </text>
                 }
             ];
 
@@ -224,14 +248,21 @@ else
 
             function calcularSubtotal(i) {
                 const qtd = Number(document.querySelector(`input[name='ItensCarrinho[${i}].Quantidade']`).value);
-                const modoAluguel = document.getElementById(`modoSwitch_${i}`).checked;
+
+                // 🔥 Corrigido: pega o valor do select
+                const modoSelect = document.querySelector(`select[name='ItensCarrinho[${i}].ModoAluguel']`);
+                const modoAluguel = modoSelect.value === "true";
+
                 const semanas = Number(document.getElementById(`periodoInput_${i}`).value);
                 const precoCompra = parseFloat(itens[i].precoCompra);
                 const precoAluguel = parseFloat(itens[i].precoAluguel);
                 const maxSemanas = Math.floor(itens[i].maxDias / 7);
 
+                // 🔥 Atualiza label (se você estiver usando isso ainda)
                 const label = document.getElementById(`modoLabel_${i}`);
-                label.innerText = modoAluguel ? 'Aluguel' : 'Compra';
+                if (label) {
+                    label.innerText = modoAluguel ? 'Aluguel' : 'Compra';
+                }
 
                 if (modoAluguel) {
                     let semanasValidadas = semanas;
@@ -270,6 +301,30 @@ else
             window.onload = () => {
                 atualizarTotais();
             };
+
+            function validarQuantidade(i) {
+                const input = document.querySelector(`input[name='ItensCarrinho[${i}].Quantidade']`);
+                const estoque = itens[i].estoque;
+                let qtd = parseInt(input.value);
+
+                if (qtd < 1) {
+                    qtd = 1;
+                    input.value = 1;
+                }
+                if (qtd > estoque) {
+                    alert(`A quantidade máxima disponível para este livro é ${estoque}.`);
+                    qtd = estoque;
+                    input.value = estoque;
+                }
+
+                atualizarTotais();
+            }
+
+            function removerItem(livroId) {
+                if (confirm('Deseja realmente remover este livro do carrinho?')) {
+                    window.location.href = `/Carrinho?handler=RemoverDoCarrinho&livroId=${livroId}`;
+                }
+            }
         </script>
     }
 }

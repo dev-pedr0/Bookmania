@@ -41,6 +41,14 @@ namespace Bookmania.Data
                 .HasOne(le => le.Usuario)
                 .WithMany()
                 .HasForeignKey(le => le.UsuarioId);
+
+            modelBuilder.Entity<Ordem>()
+            .Property(o => o.Status)
+            .HasConversion<string>();
+
+            modelBuilder.Entity<Ordem>()
+                .Property(o => o.Tipo)
+                .HasConversion<string>();
         }
     }
 }
