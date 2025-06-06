@@ -1,0 +1,43 @@
+﻿@page
+@model Bookmania.Pages.ListasEsperas.PorLivroModel
+@{
+	ViewData["Title"] = "Lista de Espera";
+}
+
+<h1 class="text-center">Lista de Espera</h1>
+<h4 class="text-center text-warning mb-4">@Model.Livro.Titulo</h4>
+
+@if (!Model.Espera.Any())
+{
+    <p class="text-center text-muted">Nenhum usuário na lista de espera.</p>
+}
+else
+{
+    <table class="tabela-livros table table-striped">
+        <thead>
+            <tr>
+                <th>Nome</th>
+                <th>Email</th>
+                <th>Telefone</th>
+                <th>Solicitado em</th>
+                <th>Ações</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model.Espera)
+            {
+                <tr>
+                    <td>@item.Usuario.Nome</td>
+                    <td>@item.Usuario.Email</td>
+                    <td>@item.Usuario.Telefone</td>
+                    <td>@item.DataSolicitacao.ToString("dd/MM/yyyy HH:mm")</td>
+                    <td>
+                        <form method="post" asp-page-handler="Remover" asp-route-id="@item.Id" class="d-inline">
+                            <button type="submit" class="btn btn-sm btn-danger" onclick="return confirm('Deseja remover este usuário da lista?')">Remover</button>
+                        </form>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}

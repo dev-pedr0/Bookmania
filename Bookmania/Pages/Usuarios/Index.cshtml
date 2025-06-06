@@ -1,0 +1,122 @@
+﻿@page
+@model Bookmania.Pages.Usuarios.IndexModel
+@{
+    ViewData["Title"] = "Gerenciamento de Usuários";
+}
+
+<style>
+    body {
+        background-color: #1e1e1e;
+        color: #f5f5f5;
+        font-family: 'Segoe UI', sans-serif;
+    }
+
+    h1, h2 {
+        color: #d2a679;
+    }
+
+    .tabela-users {
+        border-collapse: collapse;
+        margin-top: 20px;
+        width: 100%;
+    }
+
+    .tabela-users th {
+        background-color: #3a2f2f;
+        color: #f5f5f5;
+        padding: 10px;
+        text-align: center;
+    }
+
+    .tabela-users td {
+        padding: 8px;
+        vertical-align: middle;
+        text-align: center;
+        background-color: inherit !important;
+        color: inherit;
+    }
+
+    .btn-primary {
+        background-color: #d2a679;
+        border: none;
+        color: #1e1e1e;
+    }
+
+    .btn-primary:hover {
+        background-color: #b88c5a;
+        color: white;
+    }
+</style>
+<h1 class="text-center">Gerenciamento de Usuários</h1>
+
+<form method="get" class="mb-4">
+    <div class="row g-2">
+        <div class="col-md-4">
+            <input type="text" name="Nome" value="@Model.Nome" placeholder="Buscar por nome" class="form-control" 
+            style="background-color: grey;"/>
+        </div>
+        <div class="col-md-4">
+            <input type="text" name="CPF" value="@Model.CPF" placeholder="Buscar por CPF" class="form-control"
+                   style="background-color: grey;" />
+        </div>
+        <div class="col-md-3">
+            <select name="Role" class="form-select">
+                <option value="">Todas as Roles</option>
+                <option value="Cliente" selected="@(Model.Role == "Cliente")">Cliente</option>
+                <option value="Funcionario" selected="@(Model.Role == "Funcionario")">Funcionário</option>
+                <option value="Gerente" selected="@(Model.Role == "Gerente")">Gerente</option>
+                <option value="Administrador" selected="@(Model.Role == "Administrador")">Administrador</option>
+            </select>
+        </div>
+        <div class="col-md-2 form-check">
+            <input class="form-check-input" type="checkbox" name="MostrarInativos" value="true"
+                   @(Model.MostrarInativos ? "checked" : "") />
+            <label class="form-check-label">Mostrar Inativos</label>
+        </div>
+        <div class="col-md-1">
+            <button type="submit" class="btn-add w-100">Filtrar</button>
+        </div>
+    </div>
+</form>
+
+<table class="tabela-users table table-striped tabela-livros">
+    <thead>
+        <tr>
+            <th>Nome</th>
+            <th>CPF</th>
+            <th>Email</th>
+            <th>Telefone</th>
+            <th>Role</th>
+            <th>Status</th>
+            <th>Ações</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model.Usuarios)
+        {
+            <tr>
+                <td>@item.Usuario.Nome</td>
+                <td>@item.Usuario.CPF</td>
+                <td>@item.Usuario.Email</td>
+                <td>@item.Usuario.Telefone</td>
+                <td>@string.Join(", ", item.Roles)</td>
+                <td>@(item.Usuario.Ativo ? "Ativo" : "Inativo")</td>
+                <td>
+                    @if (item.Roles.Any() && Model.PodeEditar(item.Roles.First()))  @* Pode usar a primeira role para decisão, ajuste se precisar *@
+                    {
+                        <a asp-page="/Usuarios/Editar" asp-route-id="@item.Usuario.Id" class="btn btn-sm btn-primary">Editar</a>
+                        <a asp-page="/Usuarios/Inativar" asp-route-id="@item.Usuario.Id" class="btn btn-sm btn-danger">Inativar</a>
+                    }
+                    else
+                    {
+                        <span class="text-muted">Sem permissão</span>
+                    }
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+<div class="mb-3">
+    <a asp-page="/Usuarios/Criar" class="btn btn-primary">Criar Usuário</a>
+</div>

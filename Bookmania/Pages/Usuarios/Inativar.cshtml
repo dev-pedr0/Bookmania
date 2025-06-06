@@ -1,0 +1,28 @@
+﻿@page "{id}"
+@model Bookmania.Pages.Usuarios.InativarModel
+@{
+	ViewData["Title"] = "Inativar Usuário";
+}
+
+<h2>Inativar Usuário</h2>
+
+@if (Model.Usuario == null)
+{
+    <div class="alert alert-danger">Usuário não encontrado.</div>
+}
+else
+{
+    <div class="alert alert-warning">
+        <p><strong>Nome:</strong> @Model.Usuario.Nome</p>
+        <p><strong>Email:</strong> @Model.Usuario.Email</p>
+        <p><strong>CPF:</strong> @Model.Usuario.CPF</p>
+        <p><strong>Função:</strong> @Model.RoleUsuario</p>
+        <p>Tem certeza que deseja inativar este usuário?</p>
+    </div>
+
+    <form method="post">
+        <input type="hidden" asp-for="Usuario.Id" />
+        <button type="submit" class="btn btn-danger">Confirmar Inativação</button>
+        <a asp-page="/Usuarios/Index" class="btn btn-secondary">Cancelar</a>
+    </form>
+}

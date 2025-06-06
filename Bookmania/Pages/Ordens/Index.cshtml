@@ -1,0 +1,131 @@
+﻿@page
+@using Bookmania.Models
+@model Bookmania.Pages.Ordens.IndexModel
+@{
+	ViewData["Title"] = "Gerenciar Ordens";
+}
+
+<style>
+    body {
+        background-color: #1e1e1e;
+        color: #f5f5f5;
+        font-family: 'Segoe UI', sans-serif;
+    }
+
+    h1, h2 {
+        color: #d2a679;
+    }
+
+    .tabela-ordens {
+        border-collapse: collapse;
+        margin-top: 20px;
+        width: 100%;
+    }
+
+    .tabela-ordens th {
+        background-color: #3a2f2f;
+        color: #f5f5f5;
+        padding: 10px;
+        text-align: center;
+    }
+
+    .tabela-ordens td {
+        padding: 8px;
+        vertical-align: middle;
+        text-align: center;
+        background-color: inherit !important;
+        color: inherit;
+    }
+</style>
+
+<h1 class="text-center">Gerenciamento de Ordens</h1>
+
+<form method="get" class="mb-4">
+    <div class="row g-2">
+        <div class="col-md-4">
+            <select name="Tipo" class="form-select">
+                <option value="">Todos os Tipos</option>
+                @foreach (var tipo in Enum.GetValues(typeof(TipoOrdem)))
+                {
+                    var selected = Model.Tipo == (TipoOrdem?)tipo ? "selected" : null;
+                    <option value="@tipo" selected="@selected">@tipo</option>
+                }
+            </select>
+        </div>
+        <div class="col-md-4">
+            <select name="Status" class="form-select">
+                <option value="">Todos os Status</option>
+                @foreach (var status in Enum.GetValues(typeof(StatusOrdem)))
+                {
+                    var selected = Model.Status == (StatusOrdem?)status ? "selected" : null;
+                    <option value="@status" selected="@selected">@status</option>
+                }
+            </select>
+        </div>
+        <div class="col-md-2">
+            <button type="submit" class="btn-add w-100">Filtrar</button>
+        </div>
+        <div class="col-md-2">
+            <form method="post" asp-page-handler="AtualizarAtrasos">
+                <button type="submit" class="btn-add w-100">Atualizar Atrasos</button>
+            </form>
+        </div>
+    </div>
+</form>
+
+<table class="tabela-ordens table table-striped">
+    <thead>
+        <tr>
+            <th>ID</th>
+            <th>Usuário</th>
+            <th>Tipo</th>
+            <th>Status</th>
+            <th>Data</th>
+            <th>Data de Entrega</th>
+            <th>Valor Total</th>
+            <th>Multa</th>
+            <th>Itens</th>
+            <th>Ações</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var ordem in Model.Ordens)
+        {
+            <tr>
+                <td>@ordem.Id</td>
+                <td>@ordem.Usuario.Nome</td>
+                <td>@ordem.Tipo</td>
+                <td>@ordem.Status</td>
+                <td>@ordem.Data.ToString("dd/MM/yyyy")</td>
+                <td>
+                    @(ordem.Tipo == TipoOrdem.Aluguel && ordem.LimiteDias.HasValue
+                                    ? ordem.Data.AddDays(ordem.LimiteDias.Value).ToString("dd/MM/yyyy")
+                                    : "-")
+                </td>
+                <td>@ordem.ValorTotal.ToString("C")</td>
+                <td>
+                    @if (ordem.Tipo == TipoOrdem.Aluguel && ordem.LimiteDias.HasValue)
+                    {
+                        var multa = ordem.CalcularMulta(DateTime.Today);
+                        @multa.ToString("C")
+                    }
+                    else
+                    {
+                        @("-")
+                    }
+                </td>
+                <td>
+                    <ul>
+                        @foreach (var item in ordem.Itens)
+                        {
+                            <li>@item.Livro.Titulo (Qtd: @item.Quantidade)</li>
+                        }
+                    </ul>
+                </td>
+                <td>
+                    <a asp-page="/Ordens/MudarStatus" asp-route-id="@ordem.Id" class="btn btn-warning btn-sm">Mudar Status</a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

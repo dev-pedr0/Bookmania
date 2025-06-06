@@ -1,0 +1,102 @@
+﻿@page
+@model Bookmania.Pages.Usuarios.EditarModel
+@{
+	ViewData["Title"] = "Editar Usuário";
+}
+
+<style>
+    body {
+        background-color: #1e1e1e;
+        color: #f5f5f5;
+        font-family: 'Segoe UI', sans-serif;
+    }
+
+    h2 {
+        color: #d2a679;
+        text-align: center;
+    }
+
+    .form-container {
+        background-color: #2c2c2c;
+        padding: 30px;
+        border-radius: 8px;
+        box-shadow: 0 0 10px #000;
+        max-width: 800px;
+        margin: 0 auto;
+    }
+
+    .form-control, .form-select {
+        background-color: #3a2f2f;
+        color: #f5f5f5;
+        border: 1px solid #555;
+    }
+
+    .form-label {
+        color: #d2a679;
+    }
+
+    .btn-primary {
+        background-color: #d2a679;
+        border: none;
+        color: #1e1e1e;
+    }
+
+        .btn-primary:hover {
+            background-color: #b88c5a;
+            color: white;
+        }
+
+</style>
+
+<h2 class="text-center">Editar Usuário</h2>
+
+<form method="post">
+    <div asp-validation-summary="All" class="text-danger"></div>
+    <input type="hidden" asp-for="Usuario.Id" />
+
+    <div class="mb-3">
+        <label asp-for="Usuario.Nome" class="form-label"></label>
+        <input asp-for="Usuario.Nome" class="form-control" />
+        <span asp-validation-for="Usuario.Nome" class="text-danger"></span>
+    </div>
+
+    <div class="mb-3">
+        <label asp-for="Usuario.Idade" class="form-label"></label>
+        <input asp-for="Usuario.Idade" class="form-control" />
+        <span asp-validation-for="Usuario.Idade" class="text-danger"></span>
+    </div>
+
+    <div class="mb-3">
+        <label asp-for="Usuario.CPF" class="form-label"></label>
+        <input asp-for="Usuario.CPF" class="form-control" />
+        <span asp-validation-for="Usuario.CPF" class="text-danger"></span>
+    </div>
+
+    <div class="mb-3">
+        <label asp-for="Usuario.Endereco" class="form-label"></label>
+        <input asp-for="Usuario.Endereco" class="form-control" />
+    </div>
+
+    <div class="mb-3">
+        <label asp-for="Usuario.Telefone" class="form-label"></label>
+        <input asp-for="Usuario.Telefone" class="form-control" />
+    </div>
+
+    <div class="mb-3">
+        <label asp-for="Usuario.Email" class="form-label"></label>
+        <input asp-for="Usuario.Email" class="form-control" />
+        <span asp-validation-for="Usuario.Email" class="text-danger"></span>
+    </div>
+
+    <div class="mb-3">
+        <label asp-for="RoleSelecionada" class="form-label">Função</label>
+        <select asp-for="RoleSelecionada" class="form-select" asp-items="Model.RolesDisponiveis"></select>
+    </div>
+
+    <button type="submit" class="btn btn-primary">Salvar</button>
+    <a asp-page="/Usuarios/Index" class="btn btn-secondary">Cancelar</a>
+</form>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

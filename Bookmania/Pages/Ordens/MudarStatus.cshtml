@@ -1,0 +1,58 @@
+﻿@page
+@model Bookmania.Pages.Ordens.MudarStatusModel
+@{
+	ViewData["Title"] = "Mudar Status da Ordem";
+}
+
+<style>
+    .btn-primary {
+        background-color: #d2a679;
+        border: none;
+        color: #1e1e1e;
+    }
+
+    .btn-primary:hover {
+        background-color: #b88c5a;
+        color: white;
+    }
+
+    .btn-cancel {
+        background-color: #888;
+        color: white;
+        padding: 6px 12px;
+        border: none;
+        border-radius: 5px;
+        text-decoration: none;
+    }
+</style>
+
+<h1>Mudar Status da Ordem #@Model.Ordem.Id</h1>
+
+<div class="card mb-4 p-3" style="color: #d2a679; background-color: #2c2c2c;">
+    <h3>Detalhes da Ordem</h3>
+    <p><strong>Usuário:</strong> @Model.Ordem.Usuario.Nome</p>
+    <p><strong>Tipo:</strong> @Model.Ordem.Tipo</p>
+    <p><strong>Status Atual:</strong> @Model.Ordem.Status</p>
+    <p><strong>Data da Ordem:</strong> @Model.Ordem.Data.ToString("dd/MM/yyyy")</p>
+    <p><strong>Valor Total:</strong> @Model.Ordem.ValorTotal.ToString("C")</p>
+    <p><strong>Limite Dias:</strong> @(Model.Ordem.LimiteDias?.ToString() ?? "-")</p>
+    <p><strong>Valor Multa:</strong> @(Model.Ordem.ValorMulta?.ToString("C") ?? "-")</p>
+
+    <h4>Itens da Ordem</h4>
+    <ul>
+        @foreach (var item in Model.Ordem.Itens)
+        {
+            <li>@item.Livro.Titulo (Qtd: @item.Quantidade)</li>
+        }
+    </ul>
+</div>
+
+<form method="post" onsubmit="return confirm('Tem certeza que deseja mudar o status da ordem?');">
+    <div class="mb-3">
+        <label for="novoStatus" class="form-label">Novo Status</label>
+        <select asp-for="NovoStatus" class="form-select" id="novoStatus" asp-items="@(new SelectList(Model.StatusDisponiveis))"></select>
+    </div>
+
+    <button type="submit" class="btn btn-primary">Confirmar Mudança</button>
+    <a asp-page="/Ordens/Index" class="btn btn-cancel ms-2">Cancelar</a>
+</form>

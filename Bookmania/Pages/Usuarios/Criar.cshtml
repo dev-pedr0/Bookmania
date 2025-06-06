@@ -1,0 +1,108 @@
+﻿@page
+@model Bookmania.Pages.Usuarios.CriarModel
+@{
+	ViewData["Title"] = "Criar Usuário";
+}
+<style>
+    body {
+        background-color: #1e1e1e;
+        color: #f5f5f5;
+        font-family: 'Segoe UI', sans-serif;
+    }
+
+    h1 {
+        color: #d2a679;
+        text-align: center;
+    }
+
+    .form-container {
+        background-color: #2c2c2c;
+        padding: 30px;
+        border-radius: 8px;
+        box-shadow: 0 0 10px #000;
+        max-width: 800px;
+        margin: 0 auto;
+    }
+
+    .form-control, .form-select {
+        background-color: #3a2f2f;
+        color: #f5f5f5;
+        border: 1px solid #555;
+    }
+
+    .form-label {
+        color: #d2a679;
+    }
+
+    .btn-primary {
+        background-color: #d2a679;
+        border: none;
+        color: #1e1e1e;
+    }
+
+    .btn-primary:hover {
+        background-color: #b88c5a;
+        color: white;
+    }
+
+</style>
+
+<h1 class="text-center">Criar Usuário</h1>
+
+<form method="post" class="mt-4">
+    <div class="mb-3">
+        <label asp-for="NovoUsuario.Nome" class="form-label">Nome</label>
+        <input asp-for="NovoUsuario.Nome" class="form-control" />
+        <span asp-validation-for="NovoUsuario.Nome" class="text-danger"></span>
+    </div>
+
+    <div class="mb-3">
+        <label asp-for="NovoUsuario.Email" class="form-label">Email</label>
+        <input asp-for="NovoUsuario.Email" class="form-control" />
+        <span asp-validation-for="NovoUsuario.Email" class="text-danger"></span>
+    </div>
+
+    <div class="mb-3">
+        <label asp-for="Senha" class="form-label">Senha</label>
+        <input asp-for="Senha" class="form-control" type="password" />
+        <span asp-validation-for="Senha" class="text-danger"></span>
+    </div>
+
+    <div class="mb-3">
+        <label asp-for="NovoUsuario.CPF" class="form-label">CPF</label>
+        <input asp-for="NovoUsuario.CPF" class="form-control" />
+        <span asp-validation-for="NovoUsuario.CPF" class="text-danger"></span>
+    </div>
+
+    <div class="mb-3">
+        <label asp-for="NovoUsuario.Idade" class="form-label">Idade</label>
+        <input asp-for="NovoUsuario.Idade" class="form-control" type="number" />
+        <span asp-validation-for="NovoUsuario.Idade" class="text-danger"></span>
+    </div>
+
+    <div class="mb-3">
+        <label asp-for="NovoUsuario.Telefone" class="form-label">Telefone</label>
+        <input asp-for="NovoUsuario.Telefone" class="form-control" />
+        <span asp-validation-for="NovoUsuario.Telefone" class="text-danger"></span>
+    </div>
+
+    <div class="mb-3">
+        <label asp-for="NovoUsuario.Endereco" class="form-label">Endereço</label>
+        <input asp-for="NovoUsuario.Endereco" class="form-control" />
+        <span asp-validation-for="NovoUsuario.Endereco" class="text-danger"></span>
+    </div>
+
+    <div class="mb-3">
+        <label asp-for="RoleSelecionada" class="form-label">Perfil (Role)</label>
+        <select asp-for="RoleSelecionada" asp-items="@(new SelectList(Model.RolesDisponiveis))" class="form-select"></select>
+        <span asp-validation-for="RoleSelecionada" class="text-danger"></span>
+    </div>
+
+    <button type="submit" class="btn btn-primary w-100">Criar Usuário</button>
+</form>
+<partial name="_ValidationScriptsPartial" />
+<div asp-validation-summary="All" class="text-danger"></div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

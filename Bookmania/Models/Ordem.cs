@@ -11,6 +11,7 @@
     {
         Pendente,
         Confirmada,
+        Atrasada,
         Cancelada,
         Concluida
     }
