@@ -1,0 +1,101 @@
+﻿@page
+@model Bookmania.Areas.Identity.Pages.Account.Manage.OrdensListaModel
+@{
+	ViewData["Title"] = "Minhas Ordens";
+	ViewData["ActivePage"] = "OrdensLista";
+}
+<link rel="stylesheet" href="~/css/identity-amadeirado.css" />
+
+<h3 class="text-center" style="color: #d2a679;">@ViewData["Title"]</h3>
+
+<div class="row justify-content-center">
+    <div class="col-md-10">
+        <section style="background-color: #3a2f2f; padding: 25px; border-radius: 12px;
+        box-shadow: 0 0 10px rgba(0,0,0,0.5);">
+
+            <form method="get" class="mb-4 d-flex gap-3 flex-wrap">
+                <div>
+                    <label class="form-label" style="color: #d2a679;">Tipo</label>
+                    <select name="FiltroTipo" class="form-select">
+                        <option value="">Todos</option>
+                        @foreach (var tipo in Enum.GetValues(typeof(Bookmania.Models.TipoOrdem)))
+                        {
+                            <option value="@tipo" selected="@(tipo.ToString() == Model.FiltroTipo?.ToString() ? "selected" : null)">
+                                @tipo
+                            </option>
+                        }
+                    </select>
+                </div>
+
+                <div>
+                    <label class="form-label" style="color: #d2a679;">Status</label>
+                    <select name="FiltroStatus" class="form-select">
+                        <option value="">Todos</option>
+                        @foreach (var status in Enum.GetValues(typeof(Bookmania.Models.StatusOrdem)))
+                        {
+                            <option value="@status" selected="@(status.ToString() == Model.FiltroStatus?.ToString() ? "selected" : null)">
+                                @status
+                            </option>
+                        }
+                    </select>
+                </div>
+
+                <div>
+                    <label class="form-label" style="color: #d2a679;">Ordenar por</label>
+                    <select name="Ordenacao" class="form-select">
+                        <option value="desc" selected="@(Model.Ordenacao == "desc" ? "selected" : null)">Mais recentes</option>
+                        <option value="asc" selected="@(Model.Ordenacao == "asc" ? "selected" : null)">Mais antigas</option>
+                    </select>
+                </div>
+
+                <div class="align-self-end">
+                    <button type="submit" class="btn btn-add" style="background-color: #d2a679; color: #3a2f2f;">Filtrar</button>
+                </div>
+            </form>
+
+            @if (Model.Ordens.Count == 0)
+            {
+                <p style="color: #d2a679;">Nenhuma ordem encontrada.</p>
+            }
+            else
+            {
+                <table class="table-amadeirado">
+                    <thead>
+                        <tr>
+                            <th>Id</th>
+                            <th>Data</th>
+                            <th>Tipo</th>
+                            <th>Status</th>
+                            <th>Valor Total</th>
+                            <th>Itens</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var ordem in Model.Ordens)
+                        {
+                            <tr>
+                                <td>@ordem.Id</td>
+                                <td>@ordem.Data.ToString("dd/MM/yyyy HH:mm")</td>
+                                <td>@ordem.Tipo</td>
+                                <td>@ordem.Status</td>
+                                <td>R$ @ordem.ValorTotal.ToString("N2")</td>
+                                <td>
+                                    <ul class="lista-itens">
+                                        @foreach (var item in ordem.Itens)
+                                        {
+                                            <li>@item.Livro.Titulo - Qtd: @item.Quantidade</li>
+                                        }
+                                    </ul>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            }
+        </section>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

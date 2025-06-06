@@ -146,6 +146,13 @@
     </div>
 </form>
 
+@if (TempData["Mensagem"] != null)
+{
+    <div class="alert alert-success text-center" role="alert">
+        @TempData["Mensagem"]
+    </div>
+}
+
 <table class="table tabela-livros table-hover text-center align-middle">
     <thead class="table-dark">
         <tr>
@@ -181,29 +188,73 @@
                 <td>R$ @livro.PrecoCompra.ToString("F2")</td>
                 <td>@livro.Quantidade</td>
                 <td>@(livro.LivroCotacaoEspecial ? "Sim" : "Não")</td>
-                <td colspan="2">
-                    <form asp-page-handler="AdicionarAoCarrinho" method="post" class="d-flex gap-2 align-items-center">
-                        <input type="hidden" name="livroId" value="@livro.Id" />
-                        <input class="form-control form-control-sm text-warning"
-                               type="number"
-                               name="quantidade"
-                               min="0"
-                               max="@livro.Quantidade"
-                               value=""
-                               style="width: 70px;"
-                               @(livro.Quantidade == 0 ? "disabled" : "") />
-
-                        <button type="submit"
-                                class="btn btn-sm btn-success"
-                                @(livro.Quantidade == 0 ? "disabled" : "")>
-                            Carrinho
+                <td>
+                    @if (livro.Quantidade > 0)
+                    {
+                        <form asp-page-handler="AdicionarAoCarrinho" method="post" class="d-flex gap-2 align-items-center">
+                            <input type="hidden" name="livroId" value="@livro.Id" />
+                            <input class="form-control form-control-sm text-warning"
+                                   type="number"
+                                   name="quantidade"
+                                   min="1"
+                                   max="@livro.Quantidade"
+                                   value="1"
+                                   style="width: 70px;" />
+                            <button type="submit" class="btn btn-sm btn-success">Carrinho</button>
+                        </form>
+                    }
+                    else
+                    {
+                        <!-- Botão que abre modal para lista de espera -->
+                        <button class="btn btn-sm btn-warning" data-bs-toggle="modal" data-bs-target="#modalListaEspera" data-livroid="@livro.Id" data-livrotitulo="@livro.Titulo">
+                            Entrar na lista de espera
                         </button>
-                    </form>
+                    }
                 </td>
+                <td></td>
             </tr>
         }
     </tbody>
 </table>
+
+<div class="modal fade text-dark" id="modalListaEspera" tabindex="-1" aria-labelledby="modalListaEsperaLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <form method="post" asp-page-handler="EntrarListaEspera">
+            <div class="modal-content">
+                <div class="modal-header bg-warning text-dark">
+                    <h5 class="modal-title" id="modalListaEsperaLabel">Entrar na lista de espera</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fechar"></button>
+                </div>
+                <div class="modal-body">
+                    <input type="hidden" id="livroIdModal" name="livroId" value="" />
+                    <p>Você quer ser avisado quando o livro <strong id="livroTituloModal"></strong> estiver disponível.</p>
+                    <p>Confirme seu interesse para entrar na lista de espera.</p>
+                    @if (!User.Identity.IsAuthenticated)
+                    {
+                        <p class="text-danger">Você precisa estar logado para entrar na lista de espera.</p>
+                    }
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="submit" class="btn btn-warning" @(User.Identity.IsAuthenticated ? "" : "disabled")>Confirmar</button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        var modalListaEspera = document.getElementById('modalListaEspera');
+        modalListaEspera.addEventListener('show.bs.modal', function (event) {
+          var button = event.relatedTarget;
+          var livroId = button.getAttribute('data-livroid');
+          var livroTitulo = button.getAttribute('data-livrotitulo');
+          modalListaEspera.querySelector('#livroIdModal').value = livroId;
+          modalListaEspera.querySelector('#livroTituloModal').textContent = livroTitulo;
+        });
+    </script>
+}
 
 <nav aria-label="Navegação de página">
     <ul class="pagination justify-content-center">

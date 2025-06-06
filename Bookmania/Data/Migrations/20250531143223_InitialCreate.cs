@@ -104,7 +104,7 @@ namespace Bookmania.Data.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "ListasDeEspera",
+                name: "ListaEspera",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
@@ -115,15 +115,15 @@ namespace Bookmania.Data.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_ListasDeEspera", x => x.Id);
+                    table.PrimaryKey("PK_ListaEspera", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_ListasDeEspera_AspNetUsers_UsuarioId",
+                        name: "FK_ListaEspera_AspNetUsers_UsuarioId",
                         column: x => x.UsuarioId,
                         principalTable: "AspNetUsers",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_ListasDeEspera_Livros_LivroId",
+                        name: "FK_ListaEspera_Livros_LivroId",
                         column: x => x.LivroId,
                         principalTable: "Livros",
                         principalColumn: "Id",
@@ -193,13 +193,13 @@ namespace Bookmania.Data.Migrations
                 column: "OrdemId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_ListasDeEspera_LivroId",
-                table: "ListasDeEspera",
+                name: "IX_ListaEspera_LivroId",
+                table: "ListaEspera",
                 column: "LivroId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_ListasDeEspera_UsuarioId",
-                table: "ListasDeEspera",
+                name: "IX_ListaEspera_UsuarioId",
+                table: "ListaEspera",
                 column: "UsuarioId");
 
             migrationBuilder.CreateIndex(
@@ -220,7 +220,7 @@ namespace Bookmania.Data.Migrations
                 name: "ItensOrdem");
 
             migrationBuilder.DropTable(
-                name: "ListasDeEspera");
+                name: "ListaEspera");
 
             migrationBuilder.DropTable(
                 name: "LivroTema");

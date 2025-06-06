@@ -26,6 +26,26 @@
                         <li class="nav-item">
                             <a class="nav-link text-dark" asp-area="" asp-page="/Carrinho">Carrinho</a>
                         </li>
+
+                        @* Menu Gerenciamento, visível para Funcionário, Gerente e Administrador *@
+                        @if (User.IsInRole("Funcionario") || User.IsInRole("Gerente") || User.IsInRole("Administrador"))
+                        {
+                            <li class="nav-item dropdown">
+                                <a class="nav-link dropdown-toggle text-dark" href="#" id="gerenciamentoDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                    Gerenciamento
+                                </a>
+                                <ul class="dropdown-menu" aria-labelledby="gerenciamentoDropdown">
+                                    <li><a class="dropdown-item" href="/Livros">Gerenciar Livros</a></li>
+                                    <li><a class="dropdown-item" href="/Ordens">Gerenciar Pedidos</a></li>
+                                    <li><a class="dropdown-item" href="/ListaEspera">Lista de Espera</a></li>
+                                    @if (User.IsInRole("Gerente") || User.IsInRole("Administrador"))
+                                    {
+                                        <li><hr class="dropdown-divider" /></li>
+                                        <li><a class="dropdown-item" href="/Usuarios">Gerenciar Usuários</a></li>
+                                    }
+                                </ul>
+                            </li>
+                        }
                     </ul>
                     <partial name="_LoginPartial" />
                 </div>

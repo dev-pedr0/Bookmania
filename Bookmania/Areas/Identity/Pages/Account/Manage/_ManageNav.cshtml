@@ -1,0 +1,38 @@
+@inject SignInManager<Usuario> SignInManager
+@{
+    var hasExternalLogins = (await SignInManager.GetExternalAuthenticationSchemesAsync()).Any();
+}
+
+<link rel="stylesheet" href="~/css/identity-amadeirado.css" />
+
+<ul class="nav nav-pills flex-column" style="background-color: #3a2f2f; padding: 15px; border-radius: 12px; box-shadow: 0 0 10px rgba(0,0,0,0.5);">
+    <li class="nav-item">
+        <a class="nav-link @ManageNavPages.IndexNavClass(ViewContext)" id="profile" asp-page="./Index">Perfil</a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link @ManageNavPages.EmailNavClass(ViewContext)" id="email" asp-page="./Email">Email</a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link @ManageNavPages.ChangePasswordNavClass(ViewContext)" id="change-password" asp-page="./ChangePassword">Senha</a>
+    </li>
+    @if (hasExternalLogins)
+    {
+        <li id="external-logins" class="nav-item">
+            <a id="external-login" class="nav-link @ManageNavPages.ExternalLoginsNavClass(ViewContext)" asp-page="./ExternalLogins">Logins externos</a>
+        </li>
+    }
+    <li class="nav-item">
+        <a class="nav-link @ManageNavPages.EditAdditionalDataNavClass(ViewContext)"
+           id="other-data" asp-page="./EditAdditionalData">
+            Dados adicionais
+        </a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link @ManageNavPages.OrdensListaClass(ViewContext)" asp-page="./OrdensLista">
+            Minhas Ordens
+        </a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link @ManageNavPages.PersonalDataNavClass(ViewContext)" id="personal-data" asp-page="./PersonalData">Dados pessoais</a>
+    </li>
+</ul>

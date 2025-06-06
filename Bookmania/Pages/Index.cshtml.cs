@@ -1,3 +1,4 @@
+using System.Security.Claims;
 using Bookmania.Data;
 using Bookmania.Helpers;
 using Bookmania.Models;
@@ -112,6 +113,44 @@ namespace Bookmania.Pages
                 return RedirectToPage();
             }
             CarrinhoSessionHelper.AdicionarItem(HttpContext.Session, livro, quantidade);
+            return RedirectToPage();
+        }
+
+        public async Task<IActionResult> OnPostEntrarListaEsperaAsync(int livroId)
+        {
+            if (!User.Identity.IsAuthenticated)
+            {
+                return RedirectToPage("/Account/Login", new { area = "Identity" });
+            }
+
+            var livro = await _context.Livros.Include(l => l.ListaEspera)
+                                             .FirstOrDefaultAsync(l => l.Id == livroId);
+
+            if (livro == null)
+            {
+                ModelState.AddModelError("", "Livro não encontrado.");
+                return Page();
+            }
+
+            var userId = User.FindFirst(ClaimTypes.NameIdentifier).Value;
+
+            var jaNaLista = livro.ListaEspera.Any(le => le.UsuarioId == userId);
+
+            if (!jaNaLista)
+            {
+                var listaEspera = new ListaEspera
+                {
+                    LivroId = livroId,
+                    UsuarioId = userId,
+                    DataSolicitacao = DateTime.Now
+                };
+
+                _context.ListaEspera.Add(listaEspera);
+                await _context.SaveChangesAsync();
+            }
+
+            TempData["Mensagem"] = $"Você entrou na lista de espera do livro '{livro.Titulo}' com sucesso!";
+
             return RedirectToPage();
         }
     }

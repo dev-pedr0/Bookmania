@@ -1,0 +1,51 @@
+﻿@page
+@model EditAdditionalDataModel
+@{
+    ViewData["Title"] = "Editar Dados Adicionais";
+    ViewData["ActivePage"] = ManageNavPages.EditAdditionalData;
+}
+<link rel="stylesheet" href="~/css/identity-amadeirado.css" />
+
+<h3 class="text-center" style="color: #d2a679;">@ViewData["Title"]</h3>
+
+<div class="row justify-content-center">
+    <div class="col-md-6">
+        <section style="background-color: #3a2f2f; padding: 25px; border-radius: 12px; box-shadow: 0 0 10px rgba(0,0,0,0.5);">
+            <form method="post" id="edit-additional-data-form">
+                <div asp-validation-summary="ModelOnly" class="text-danger" role="alert"></div>
+
+                <div class="form-floating mb-3">
+                    <input asp-for="Input.Nome" class="form-control" placeholder="Digite seu nome" />
+                    <label asp-for="Input.Nome" class="form-label">Nome</label>
+                    <span asp-validation-for="Input.Nome" class="text-danger"></span>
+                </div>
+
+                <div class="form-floating mb-3">
+                    <input asp-for="Input.Idade" type="number" class="form-control" placeholder="Digite sua idade" min="0" />
+                    <label asp-for="Input.Idade" class="form-label">Idade</label>
+                    <span asp-validation-for="Input.Idade" class="text-danger"></span>
+                </div>
+
+                <div class="form-floating mb-3">
+                    <input asp-for="Input.CPF" class="form-control" placeholder="Digite seu CPF" />
+                    <label asp-for="Input.CPF" class="form-label">CPF</label>
+                    <span asp-validation-for="Input.CPF" class="text-danger"></span>
+                </div>
+
+                <div class="form-floating mb-3">
+                    <input asp-for="Input.Endereco" class="form-control" placeholder="Digite seu endereço" />
+                    <label asp-for="Input.Endereco" class="form-label">Endereço</label>
+                    <span asp-validation-for="Input.Endereco" class="text-danger"></span>
+                </div>
+
+                <button type="submit" class="w-100 btn btn-add" style="background-color: #d2a679; color: #3a2f2f;">
+                    Salvar
+                </button>
+            </form>
+        </section>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

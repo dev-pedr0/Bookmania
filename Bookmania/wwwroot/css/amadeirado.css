@@ -41,6 +41,6 @@
     cursor: pointer;
 }
 
-    .btn-register:hover {
-        background-color: #70492e;
-    }
+.btn-register:hover {
+    background-color: #70492e;
+}

@@ -1,0 +1,36 @@
+﻿@page
+@model PersonalDataModel
+@{
+    ViewData["Title"] = "Dados Pessoais";
+    ViewData["ActivePage"] = ManageNavPages.PersonalData;
+}
+<link rel="stylesheet" href="~/css/identity-amadeirado.css" />
+
+<h3 class="text-center" style="color: #d2a679;">@ViewData["Title"]</h3>
+
+<div class="row justify-content-center">
+    <div class="col-md-6">
+        <section style="background-color: #3a2f2f; padding: 25px; border-radius: 12px; box-shadow: 0 0 10px rgba(0,0,0,0.5);">
+            <p style="color: #f5f5f5;">
+                Sua conta contém dados pessoais que você nos forneceu. Esta página permite baixar ou deletar esses dados.
+            </p>
+            <p style="color: #d2a679; font-weight: bold;">
+                Excluir esses dados removerá permanentemente sua conta e isso não poderá ser recuperado.
+            </p>
+
+            <form id="download-data" asp-page="DownloadPersonalData" method="post" class="mb-3">
+                <button type="submit" class="w-100 btn btn-add" style="background-color: #d2a679; color: #3a2f2f;">
+                    Baixar Dados
+                </button>
+            </form>
+
+            <a id="delete" asp-page="DeletePersonalData" class="w-100 btn btn-danger" style="border-radius: 12px;">
+                Excluir Conta
+            </a>
+        </section>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

@@ -16,7 +16,7 @@ namespace Bookmania.Data
         public DbSet<Tema> Temas { get; set; }
         public DbSet<Ordem> Ordens { get; set; }
         public DbSet<ItemOrdem> ItensOrdem { get; set; }
-        public DbSet<ListaEspera> ListasDeEspera { get; set; }
+        public DbSet<ListaEspera> ListaEspera { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -41,6 +41,9 @@ namespace Bookmania.Data
                 .HasOne(le => le.Usuario)
                 .WithMany()
                 .HasForeignKey(le => le.UsuarioId);
+
+            modelBuilder.Entity<ListaEspera>()
+                .ToTable("ListaEspera");
 
             modelBuilder.Entity<Ordem>()
             .Property(o => o.Status)

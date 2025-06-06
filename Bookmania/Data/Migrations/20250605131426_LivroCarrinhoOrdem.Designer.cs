@@ -78,7 +78,7 @@ namespace Bookmania.Data.Migrations
 
                     b.HasIndex("UsuarioId");
 
-                    b.ToTable("ListasDeEspera");
+                    b.ToTable("ListaEspera");
                 });
 
             modelBuilder.Entity("Bookmania.Models.Livro", b =>
